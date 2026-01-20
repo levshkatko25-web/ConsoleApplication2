@@ -1,0 +1,61 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <string>
+
+using namespace std;
+//Задание 2:  несколько указателей на несколько структур
+
+// создаю структуру для автосалона
+struct more_data_car {
+    string dealership;  // Название дилерского центра
+    int cost;           // Стоимость авто
+};
+
+// создаю структуру для автомобиля
+struct data_car {
+    string name;        // Модель авто
+    float speed;        // Скорость
+    int year;           // Дата производства
+    more_data_car more_data; // Информация о продавце
+};
+
+// главная функция
+int main() {
+    setlocale(LC_ALL, "RU");
+
+    // создаю 3 ОТДЕЛЬНЫЕ структуры
+    data_car car1 = { "Toyota MarkII", 350.71f, 2018, {"Paul Gilbert Motors", 7500000} };
+    data_car car2 = { "Porsche 911", 300.0f, 1986, {"Turbo Charge", 6000000} };
+    data_car car3 = { "Vaz 2114", 220.0f, 2006, {"Soviet Avtoprom", 400000} };
+
+    // создаю 3 ОТДЕЛЬНЫХ указателя, каждый на свою структуру
+    data_car* ptr1 = &car1;  // ptr1 указывает на car1
+    data_car* ptr2 = &car2;  // ptr2 указывает на car2
+    data_car* ptr3 = &car3;  // ptr3 указывает на car3
+
+    // вывожу информацию, используя каждый указатель отдельно
+    cout << "=== Вывод через несколько указателей ===\n\n";
+
+    // Через ptr1 вывожу данные первой машины
+    cout << "Указатель 1 -> Авто: " << ptr1->name
+        << "\n   Скорость: " << ptr1->speed << " км/ч"
+        << "\n   Год: " << ptr1->year
+        << "\n   Салон: " << ptr1->more_data.dealership
+        << "\n   Цена: " << ptr1->more_data.cost << " руб.\n\n";
+
+    // Через ptr2 вывожу данные второй машины
+    cout << "Указатель 2 -> Авто: " << ptr2->name
+        << "\n   Скорость: " << ptr2->speed << " км/ч"
+        << "\n   Год: " << ptr2->year
+        << "\n   Салон: " << ptr2->more_data.dealership
+        << "\n   Цена: " << ptr2->more_data.cost << " руб.\n\n";
+
+    // Через ptr3 вывожу данные третьей машины
+    cout << "Указатель 3 -> Авто: " << ptr3->name
+        << "\n   Скорость: " << ptr3->speed << " км/ч"
+        << "\n   Год: " << ptr3->year
+        << "\n   Салон: " << ptr3->more_data.dealership
+        << "\n   Цена: " << ptr3->more_data.cost << " руб.\n";
+
+    return 0;
+}
