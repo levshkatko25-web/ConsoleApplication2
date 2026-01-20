@@ -1,0 +1,185 @@
+#include <iostream>
+using namespace std;
+
+struct Elem {
+    float value;    // число в элементе
+    Elem* next;     // ссылка на следующий элемент
+};
+
+// проверяет пустой ли список
+bool empty(Elem* head) {
+    return head == NULL;
+}
+
+// показывает весь список
+void print(Elem* head) {
+    if (empty(head)) {
+        cout << "Пусто" << endl;
+        return;
+    }
+
+    Elem* now = head;
+    while (now != NULL) {
+        cout << now->value << " ";
+        now = now->next;
+    }
+    cout << endl;
+}
+
+// находит самое маленькое и самое большое число
+void minmax(Elem* head) {
+    if (empty(head)) return;
+
+    Elem* now = head;
+    float min = now->value;
+    float max = now->value;
+
+    while (now != NULL) {
+        if (now->value < min) min = now->value;
+        if (now->value > max) max = now->value;
+        now = now->next;
+    }
+
+    cout << "Мин: " << min << ", Макс: " << max << endl;
+}
+
+// добавляет число в конец списка
+void addEnd(Elem*& head) {
+    float num;
+    cout << "Число: ";
+    cin >> num;
+
+    Elem* newElem = new Elem;
+    newElem->value = num;
+    newElem->next = NULL;
+
+    if (head == NULL) {
+        head = newElem;
+    }
+    else {
+        Elem* now = head;
+        while (now->next != NULL) {
+            now = now->next;
+        }
+        now->next = newElem;
+    }
+}
+
+// добавляет число после указанного
+void addAfter(Elem* head) {
+    if (empty(head)) return;
+
+    print(head);
+
+    float find, num;
+    cout << "После: ";
+    cin >> find;
+
+    Elem* now = head;
+    while (now != NULL && now->value != find) {
+        now = now->next;
+    }
+
+    if (now == NULL) {
+        cout << "Не найден" << endl;
+        return;
+    }
+
+    cout << "Добавить: ";
+    cin >> num;
+
+    Elem* newElem = new Elem;
+    newElem->value = num;
+    newElem->next = now->next;
+    now->next = newElem;
+}
+
+// удаляет конкретное число из списка
+void remove(Elem*& head) {
+    if (empty(head)) return;
+
+    print(head);
+
+    float num;
+    cout << "Удалить: ";
+    cin >> num;
+
+    Elem* now = head;
+    Elem* prev = NULL;
+
+    while (now != NULL && now->value != num) {
+        prev = now;
+        now = now->next;
+    }
+
+    if (now == NULL) {
+        cout << "Не найден" << endl;
+        return;
+    }
+
+    if (prev == NULL) {
+        head = now->next;      // удаляем первый элемент
+    }
+    else {
+        prev->next = now->next; // удаляем из середины или конца
+    }
+
+    delete now;
+}
+
+// удаляет весь список
+void clear(Elem*& head) {
+    while (head != NULL) {
+        Elem* temp = head;
+        head = head->next;
+        delete temp;
+    }
+}
+
+int main() {
+    setlocale(LC_ALL, "RU");
+
+    Elem* list = NULL;
+
+    // создаем список из 10 чисел: 10, 20, 30, ..., 100
+    for (int i = 1; i <= 10; i++) {
+        Elem* elem = new Elem;
+        elem->value = i * 10;
+        elem->next = NULL;
+
+        if (list == NULL) {
+            list = elem;               // первый элемент
+        }
+        else {
+            Elem* now = list;
+            while (now->next != NULL) {
+                now = now->next;       // идем до конца
+            }
+            now->next = elem;          // добавляем в конец
+        }
+    }
+
+    cout << "1. Список: ";
+    print(list);
+
+    cout << "2. Мин/Макс: ";
+    minmax(list);
+
+    cout << "3. Добавить в конец" << endl;
+    addEnd(list);
+    print(list);
+
+    cout << "4. Добавить после" << endl;
+    addAfter(list);
+    print(list);
+
+    cout << "5. Удалить элемент" << endl;
+    remove(list);
+    print(list);
+
+    cout << "6. Удалить весь список" << endl;
+    clear(list);
+    print(list);
+
+    return 0;
+}
