@@ -1,0 +1,283 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+
+using namespace std;
+
+struct mylist {
+    float data;
+    mylist* next;         //указываю на следующий элемент
+    mylist* previous;     //на предыдущий
+};
+
+
+// ЗАДАНИЕ 1: Функция вывода всех элементов
+
+void printForward(mylist* head) {
+    //показываю пользователю все элементы списка по порядку
+    cout << "\nЗАДАНИЕ 1: Вывод всех элементов\n";
+    if (head == nullptr) {
+        cout << "Список пуст!\n";
+        return;
+    }
+
+    cout << "Список (от начала): ";
+    mylist* current = head;
+    while (current != nullptr) {
+        cout << current->data << " ";    //вывожу текущий элемент
+        current = current->next;         //перехожу к следующему
+    }
+    cout << "\n";
+}
+
+
+// ЗАДАНИЕ 2: Поиск экстремумов (макс./мин. элемент)
+
+void findMinMax(mylist* head) {
+    //ищу самое большое и самое маленькое число в списке
+    cout << "\nЗАДАНИЕ 2: Поиск максимума и минимума\n";
+
+    if (head == nullptr) {
+        cout << "Список пуст! Нельзя найти min/max.\n";
+        return;
+    }
+
+    //начинаю с первого элемента
+    float minCh = head->data;   // Пока что это минимум
+    float maxCh = head->data;   // Пока что это максимум
+
+    //проверяю все остальные элементы
+    mylist* current = head->next;
+    while (current != nullptr) {
+        if (current->data < minCh) {
+            minCh = current->data;  // Нашел число меньше текущего минимума
+            cout << "Обновлен минимум: " << minCh << "\n";
+        }
+        if (current->data > maxCh) {
+            maxCh = current->data;  // Нашел число больше текущего максимума
+            cout << "Обновлен максимум: " << maxCh << "\n";
+        }
+        current = current->next;  // Перехожу дальше
+    }
+
+    //показываю итоговые результаты
+    cout << "\nИтог:\n";
+    cout << "Минимум в списке: " << minCh << "\n";
+    cout << "Максимум в списке: " << maxCh << "\n";
+}
+
+
+// ЗАДАНИЕ 3: Добавление нового элемента после указанного элемента
+
+void addAfterValue(mylist* head, mylist*& tail, float target, float value) {
+    // Я вставляю новый элемент после того элемента, который укажет пользователь
+    cout << "\nЗАДАНИЕ 3: Добавление элемента после указанного\n";
+    cout << "Ищем элемент: " << target << "\n";
+    cout << "Хотим добавить: " << value << " после него\n";
+
+    if (head == nullptr) {
+        cout << "ОШИБКА: Список пуст! Нечего искать.\n";
+        return;
+    }
+
+    //ищу элемент target в списке
+    mylist* current = head;
+    while (current != nullptr && current->data != target) {
+        cout << "Проверяем элемент: " << current->data << " -> ";
+        current = current->next;  // Перебираю элементы пока не найду нужный
+    }
+
+    if (current == nullptr) {
+        cout << "\nОШИБКА: Элемент " << target << " не найден в списке!\n";
+        return;
+    }
+
+    cout << "Найден элемент: " << current->data << "\n";
+
+    // Я создаю новый элемент для вставки
+    mylist* newNode = new mylist;
+    newNode->data = value;           // Записываю новое значение
+    newNode->next = current->next;   // Новый элемент указывает на следующий за current
+    newNode->previous = current;     // Новый элемент указывает назад на current
+
+    // Я обновляю связи между элементами
+    if (current->next != nullptr) {
+        // Если вставляем не в самый конец
+        current->next->previous = newNode;  // Следующий элемент теперь знает о новом
+        cout << "Следующий элемент (" << current->next->data
+            << ") теперь указывает на новый элемент\n";
+    }
+    else {
+        // Если вставляем после последнего элемента
+        tail = newNode;  // Теперь новый элемент - это хвост списка
+        cout << "Добавляем в конец, обновляем tail\n";
+    }
+
+    current->next = newNode;  // Теперь current указывает на новый элемент
+    cout << "Элемент " << value << " успешно добавлен после " << target << "\n";
+}
+
+// ЗАДАНИЕ 4: Удаление указанного элемента из списка
+
+void deleteValue(mylist*& head, mylist*& tail, float value) {
+    // Я удаляю конкретный элемент, который хочет пользователь
+    cout << "\nЗАДАНИЕ 4: Удаление указанного элемента\n";
+    cout << "Пытаемся удалить элемент: " << value << "\n";
+
+    if (head == nullptr) {
+        cout << "ОШИБКА: Список пуст! Нечего удалять.\n";
+        return;
+    }
+
+    // Я ищу элемент, который нужно удалить
+    mylist* current = head;
+    while (current != nullptr && current->data != value) {
+        cout << "Пропускаем элемент: " << current->data << "\n";
+        current = current->next;  // Иду по списку пока не найду нужный элемент
+    }
+
+    if (current == nullptr) {
+        cout << "ОШИБКА: Элемент " << value << " не найден!\n";
+        return;
+    }
+
+    cout << "Найден элемент для удаления: " << current->data << "\n";
+
+    // Я определяю где находится элемент (начало, середина или конец)
+    if (current->previous == nullptr) {
+        // Удаляю первый элемент
+        cout << "Удаляем ПЕРВЫЙ элемент списка\n";
+        head = current->next;  // Теперь head указывает на следующий элемент
+    }
+    else {
+        // Удаляю элемент из середины
+        cout << "Удаляем элемент из СЕРЕДИНЫ списка\n";
+        current->previous->next = current->next;  // Предыдущий указывает на следующий
+    }
+
+    if (current->next == nullptr) {
+        // Удаляю последний элемент
+        cout << "Удаляем ПОСЛЕДНИЙ элемент списка\n";
+        tail = current->previous;  // Теперь tail указывает на предыдущий
+    }
+    else {
+        current->next->previous = current->previous;  // Следующий указывает на предыдущий
+    }
+
+    //освобождаю память, которую занимал удаленный элемент
+    cout << "Освобождаем память элемента: " << current->data << "\n";
+    delete current;  // Удаляю элемент из памяти
+    cout << "Элемент " << value << " успешно удален!\n";
+}
+
+
+// ЗАДАНИЕ 5: Удаление всех элементов списка
+
+void clearList(mylist*& head, mylist*& tail) {
+    // Я удаляю ВСЕ элементы списка, очищаю всю память
+    cout << "\nЗАДАНИЕ 5: Удаление всех элементов\n";
+
+    if (head == nullptr) {
+        cout << "Список уже пуст!\n";
+        return;
+    }
+
+    cout << "Начинаем удаление элементов:\n";
+    mylist* current = head;
+    int count = 0;
+
+    // Я прохожу по всем элементам и удаляю их один за другим
+    while (current != nullptr) {
+        mylist* nextNode = current->next;  // Запоминаю следующий элемент
+        cout << "Удаляем элемент №" << ++count << ": " << current->data << "\n";
+        delete current;                     // Удаляю текущий элемент
+        current = nextNode;                 // Перехожу к следующему
+    }
+
+    // Я обнуляю указатели, так как список теперь пуст
+    head = nullptr;
+    tail = nullptr;
+
+    cout << "\nУдалено всего элементов: " << count << "\n";
+    cout << "Список полностью очищен. head = nullptr, tail = nullptr\n";
+}
+
+// Вспомогательная функция для добавления элементов
+void addToEnd(mylist*& head, mylist*& tail, float value) {
+    // Я добавляю новый элемент в КОНЕЦ списка
+    mylist* newNode = new mylist;      // Создаю новый элемент
+    newNode->data = value;             // Записываю в него значение
+    newNode->next = nullptr;           // После него ничего нет (он последний)
+    newNode->previous = tail;          // Перед ним - текущий последний элемент
+
+    if (tail == nullptr) {
+        // Если список был пуст, новый элемент становится и началом и концом
+        head = newNode;
+        tail = newNode;
+    }
+    else {
+        // Если в списке уже были элементы, добавляю новый в конец
+        tail->next = newNode;  // Старый последний теперь указывает на новый
+        tail = newNode;        // Теперь новый элемент - последний
+    }
+}
+
+int main() {
+    setlocale(LC_ALL, "RU");
+
+    // Я создаю указатели на начало и конец списка
+    mylist* head = nullptr;  // Указывает на первый элемент (или NULL если пусто)
+    mylist* tail = nullptr;  // Указывает на последний элемент (или NULL если пусто)
+
+    cout << "Лабораторная работа: Двусвязный список\n";
+    cout << "Список заданий:\n";
+    cout << "1. Вывод всех элементов\n";
+    cout << "2. Поиск min/max\n";
+    cout << "3. Добавление после элемента\n";
+    cout << "4. Удаление элемента\n";
+    cout << "5. Удаление всех элементов\n\n";
+
+    // Я создаю начальный список для демонстрации
+    cout << "Подготовка: Создаем список\n";
+    addToEnd(head, tail, 10);
+    addToEnd(head, tail, 25);
+    addToEnd(head, tail, 15);
+    addToEnd(head, tail, 40);
+    addToEnd(head, tail, 5);
+
+    cout << "Создан список: 10 -> 25 -> 15 -> 40 -> 5\n";
+
+    // Теперь я демонстрирую работу всех функций
+    // ЗАДАНИЕ 1: Вывод всех элементов
+    printForward(head);
+
+    // ЗАДАНИЕ 2: Поиск min/max
+    findMinMax(head);
+
+    // ЗАДАНИЕ 3: Добавление после элемента
+    // Добавляем 30 после 15
+    addAfterValue(head, tail, 15, 30);
+    printForward(head);  // Проверяем результат
+
+    // Добавляем 1 после 5 (в конец)
+    addAfterValue(head, tail, 5, 1);
+    printForward(head);  // Проверяем результат
+
+    // ЗАДАНИЕ 4: Удаление элемента
+    // Удаляем элемент 25
+    deleteValue(head, tail, 25);
+    printForward(head);  // Проверяем результат
+
+    // Пытаемся удалить несуществующий элемент
+    deleteValue(head, tail, 100);
+
+    // ЗАДАНИЕ 5: Удаление всех элементов
+    clearList(head, tail);
+
+    // Проверяем, что список пуст
+    printForward(head);
+
+    // Пытаемся найти min/max в пустом списке
+    findMinMax(head);
+
+    return 0;
+}
