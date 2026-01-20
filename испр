@@ -1,0 +1,19 @@
+// Задание 8. Найти сумму элементов массива, расположенных между MAX и MIN элементами.
+void zadanie8() {
+    cout << "8 задание" << endl;
+    int arr[5] = {6, 5, 3, 2, 1};
+    
+    // Находим где минимум и максимум
+    int min_i = 0, max_i = 0;
+    for (int i = 1; i < 5; i++) {
+        if (arr[i] < arr[min_i]) min_i = i;
+        if (arr[i] > arr[max_i]) max_i = i;
+    }
+
+    // Считаем сумму между ними
+    int sum = 0;
+    for (int i = min_i + 1; i < max_i; i++) sum += arr[i];
+    for (int i = max_i + 1; i < min_i; i++) sum += arr[i];
+
+    cout << "Сумма между " << arr[min_i] << " и " << arr[max_i] << ": " << sum << endl;
+}
