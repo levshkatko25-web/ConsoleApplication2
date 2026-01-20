@@ -1,0 +1,87 @@
+#include <iostream>
+
+using namespace std;
+
+struct BinTree {
+    int data;          // Храним число
+    BinTree* left;     // Указатель на левый узел
+    BinTree* right;    // Указатель на правый узел
+};
+
+// Функция поиска: ищем число в дереве
+bool search(BinTree* Tree, int num) {
+    // Если дерево пустое - число не найдено
+    if (Tree == NULL) {
+        return false;
+    }
+    
+    // Если нашли нужное число
+    if (num == Tree->data) {
+        return true;
+    }
+    
+    // Если искомое число меньше - идем налево
+    if (num < Tree->data) {
+        return search(Tree->left, num);
+    }
+    // Если искомое число больше - идем направо
+    else {
+        return search(Tree->right, num);
+    }
+}
+
+// Функция добавления: добавляем число в дерево
+BinTree* insert(BinTree* Tree, int value) {
+    // Если нашли пустое место - создаем здесь новый узел
+    if (Tree == NULL) {
+        BinTree* newNode = new BinTree;
+        newNode->data = value;
+        newNode->left = NULL;
+        newNode->right = NULL;
+        return newNode;
+    }
+    
+    // Если новое число меньше - добавляем слева
+    if (value < Tree->data) {
+        Tree->left = insert(Tree->left, value);
+    }
+    // Если новое число больше - добавляем справа
+    else if (value > Tree->data) {
+        Tree->right = insert(Tree->right, value);
+    }
+    
+    // Если число уже есть - не добавляем
+    return Tree;
+}
+
+// Основная программа
+int main() {
+    setlocale(LC_ALL, "RU");
+    
+    BinTree* Tree = NULL; // Начинаем с пустого дерева
+    
+    // Добавляем числа в дерево
+    Tree = insert(Tree, 50);
+    Tree = insert(Tree, 30);
+    Tree = insert(Tree, 70);
+    Tree = insert(Tree, 20);
+    Tree = insert(Tree, 40);
+    Tree = insert(Tree, 60);
+    Tree = insert(Tree, 80);
+    
+    cout << "Дерево создано!\n";
+    
+    // Ищем числа в дереве
+    int numbers[] = {30, 45, 80};
+    
+    for (int i = 0; i < 3; i++) {
+        int num = numbers[i];
+        if (search(Tree, num)) {
+            cout << "Число " << num << " есть в дереве\n";
+        } else {
+            cout << "Число " << num << " нет в дереве\n";
+        }
+    }
+    
+    return 0;
+}
