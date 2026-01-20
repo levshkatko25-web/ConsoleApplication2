@@ -1,1 +1,118 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <string>
 
+using namespace std;
+
+//Задание 3: подфункции для работы со структурами
+
+// Я определяю структуру для информации о дилере
+struct more_data_car {
+    string dealership;  // Наименование дилерского центра
+    int cost;           // Ценник автомобиля
+};
+
+// Я создаю основную структуру автомобиля
+struct data_car {
+    string name;        // Марка и модель
+    float speed;        // Максималка
+    int year;           // Год выпуска
+    more_data_car more_data; // Данные о продавце
+};
+
+// пишу первую подфункцию - она показывает полную информацию об авто
+void showCarInfo(const data_car* carPtr) {
+    cout << "Модель: " << carPtr->name
+        << "\nСкорость: " << carPtr->speed << " км/ч"
+        << "\nГод выпуска: " << carPtr->year
+        << "\nСалон: " << carPtr->more_data.dealership
+        << "\nЦена: " << carPtr->more_data.cost << " руб.\n";
+}
+
+//пишу вторую подфункцию - она меняет дилера
+// Принимает указатель на структуру (может менять данные) и новое имя дилера
+void changeDealer(data_car* carPtr, string newDealer) {
+    // Меняю поле dealership через указатель
+    carPtr->more_data.dealership = newDealer;
+    cout << "Дилер изменен на: " << newDealer << endl;
+}
+
+// Я пишу третью подфункцию - рассчитывает возраст автомобиля
+// Принимает указатель на константную структуру и текущий год
+// Возвращает целое число - возраст
+int calculateCarAge(const data_car* carPtr, int currentYear = 2024) {
+    // Через указатель получаю год выпуска и вычисляю возраст
+    return currentYear - carPtr->year;
+}
+
+// Я пишу четвертую подфункцию - определяет категорию по скорости
+// Принимает указатель на константную структуру
+// Не возвращает значение, а сразу выводит результат
+void checkSpeedCategory(const data_car* carPtr) {
+    // Анализирую скорость через указатель carPtr
+    if (carPtr->speed > 350) {
+        cout << "Суперкар!";
+    }
+    else if (carPtr->speed > 250) {
+        cout << "Спорткар";
+    }
+    else {
+        cout << "Обычный авто";
+    }
+}
+
+// Я начинаю основную программу
+int main() {
+    setlocale(LC_ALL, "RU");  
+
+    // Создаю массив автомобилей
+    data_car car[3];
+
+    // Заполняю массив данными - исправленная инициализация
+    car[0] = { "Toyota MarkII", 350.71f, 2018, {"Paul Gilbert Motors", 7500000} };
+    car[1] = { "Porsche 911", 300.0f, 1986, {"Turbo Charge", 6000000} };
+    car[2] = { "Vaz 2114", 220.0f, 2006, {"Soviet Avtoprom", 400000} };
+
+    cout << "Работа через подфункции\n\n";
+
+    // Я перебираю все автомобили в массиве
+    for (int i = 0; i < 3; i++) {
+        cout << "Машина " << i + 1 << "\n";
+
+        // Передаю адрес текущего автомобиля в подфункцию showCarInfo
+        showCarInfo(&car[i]);
+
+        // Вызываю функцию с адресом текущего автомобиля
+        cout << "Возраст: " << calculateCarAge(&car[i]) << " лет\n";
+
+        // Вызываю checkSpeedCategory с адресом текущего автомобиля
+        cout << "Категория: ";
+        checkSpeedCategory(&car[i]);
+
+        cout << "\n\n";
+    }
+
+    //демонстрирую изменение данных через подфункцию
+    cout << "\t Меняем дилера для Toyota MarkII \n";
+    // Передаю адрес car[0] в функцию changeDealer
+    changeDealer(&car[0], "Tokyo Drift Motors");
+    // Показываю измененные данные
+    showCarInfo(&car[0]);
+
+    // Я показываю работу с указателем напрямую
+    cout << "\n=== Прямая работа с указателями ===\n";
+    // Создаю указатель и направляю его на второй элемент массива
+    data_car* carPtr = &car[1];
+    cout << "Указатель указывает на: " << carPtr->name << endl;
+
+    // Передаю этот указатель в подфункцию
+    cout << "Информация через указатель:\n";
+    showCarInfo(carPtr);
+
+    // Демонстрация изменения через указатель
+    cout << "\n=== Меняем цену Porsche через указатель ===\n";
+    carPtr->more_data.cost = 9000000;
+    cout << "Новая цена Porsche 911: " << carPtr->more_data.cost << " руб.\n";
+
+    return 0;
+}
